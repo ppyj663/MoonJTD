@@ -1,5 +1,9 @@
-// import {
-//   "ppyj663/moonjtd" @lib,
-// }
+import {
+  "ppyj663/moonjtd" @jtd,
+  "moonbitlang/core/env",
+  "moonbitlang/core/json",
+}
 
 pkgtype(kind: "executable")
+
+supported_targets = "js"
