@@ -19,7 +19,7 @@ repository = "https://github.com/ppyj663/MoonJTD"
 
 license = "Apache-2.0"
 
-keywords = ["json", "jtd", "rfc8927", "validation", "codegen"]
+keywords = [ "json", "jtd", "rfc8927", "validation", "codegen" ]
 
 preferred_target = "js"
 
