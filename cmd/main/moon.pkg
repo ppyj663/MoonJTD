@@ -1,0 +1,5 @@
+// import {
+//   "ppyj663/moonjtd" @lib,
+// }
+
+pkgtype(kind: "executable")
