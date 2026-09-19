@@ -1,0 +1,162 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "ppyj663/moonjtd"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub const SPECIFICATION : String = "RFC 8927"
+
+pub const VERSION : String = "0.1.0"
+
+pub fn jtd_type_from_name(String) -> JtdType?
+
+pub fn version_banner() -> String
+
+// Errors
+pub(all) suberror CodegenError {
+  CodegenDiagnostic(Diagnostic)
+} derive(Eq, @debug.Debug)
+
+pub(all) suberror SchemaError {
+  SchemaDiagnostic(Diagnostic)
+} derive(Eq, @debug.Debug)
+
+// Types and methods
+pub(all) struct Diagnostic {
+  code : DiagnosticCode
+  message : String
+  instance_path : JsonPointer
+  schema_path : JsonPointer
+} derive(Eq, @debug.Debug)
+pub fn Diagnostic::code(Self) -> DiagnosticCode
+pub fn Diagnostic::instance_path(Self) -> JsonPointer
+pub fn Diagnostic::message(Self) -> String
+pub fn Diagnostic::new(DiagnosticCode, String, instance_path? : JsonPointer, schema_path? : JsonPointer) -> Self
+pub fn Diagnostic::schema_path(Self) -> JsonPointer
+pub fn Diagnostic::to_string(Self) -> String
+
+pub(all) enum DiagnosticCode {
+  InvalidJson
+  ExpectedObject
+  UnknownKeyword
+  MixedSchemaForms
+  InvalidMemberType
+  InvalidTypeName
+  EmptyEnum
+  DuplicateEnumValue
+  UnknownReference
+  NestedDefinitions
+  PropertyOverlap
+  InvalidDiscriminatorMapping
+  DuplicateDiscriminatorProperty
+  ValidationMismatch
+  MissingProperty
+  AdditionalProperty
+  InvalidDiscriminatorTag
+  UnknownDiscriminatorValue
+  ResourceLimitExceeded
+  InvalidIdentifier
+  GenerationFailure
+} derive(Eq, @debug.Debug)
+pub fn DiagnosticCode::name(Self) -> String
+
+pub(all) struct JsonPointer {
+  segments : Array[PathSegment]
+} derive(Eq, @debug.Debug)
+pub fn JsonPointer::append(Self, Self) -> Self
+pub fn JsonPointer::depth(Self) -> Int
+pub fn JsonPointer::display(Self) -> String
+pub fn JsonPointer::index(Self, Int) -> Self
+pub fn JsonPointer::is_root(Self) -> Bool
+pub fn JsonPointer::last_index(Self) -> Int?
+pub fn JsonPointer::last_property(Self) -> String?
+pub fn JsonPointer::parent(Self) -> Self?
+pub fn JsonPointer::property(Self, String) -> Self
+pub fn JsonPointer::root() -> Self
+pub fn JsonPointer::segments_copy(Self) -> Array[PathSegment]
+pub fn JsonPointer::to_string(Self) -> String
+
+pub(all) enum JtdType {
+  BooleanType
+  Float32Type
+  Float64Type
+  Int8Type
+  Uint8Type
+  Int16Type
+  Uint16Type
+  Int32Type
+  Uint32Type
+  StringType
+  TimestampType
+} derive(Eq, @debug.Debug)
+pub fn JtdType::is_integer(Self) -> Bool
+pub fn JtdType::is_numeric(Self) -> Bool
+pub fn JtdType::is_signed(Self) -> Bool
+pub fn JtdType::maximum(Self) -> Double?
+pub fn JtdType::minimum(Self) -> Double?
+pub fn JtdType::name(Self) -> String
+
+pub(all) enum PathSegment {
+  Property(String)
+  Index(Int)
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Schema {
+  form : SchemaForm
+  nullable : Bool
+  metadata : Map[String, Json]
+} derive(@debug.Debug)
+pub fn Schema::allows_additional_properties(Self) -> Bool
+pub fn Schema::discriminator(String, Map[String, Self]) -> Self
+pub fn Schema::discriminator_mapping(Self) -> Map[String, Self]?
+pub fn Schema::discriminator_tag(Self) -> String?
+pub fn Schema::element_schema(Self) -> Self?
+pub fn Schema::elements(Self) -> Self
+pub fn Schema::empty() -> Self
+pub fn Schema::enum_(Array[String]) -> Self
+pub fn Schema::enum_values(Self) -> Array[String]?
+pub fn Schema::form(Self) -> SchemaForm
+pub fn Schema::form_name(Self) -> String
+pub fn Schema::is_nullable(Self) -> Bool
+pub fn Schema::metadata(Self) -> Map[String, Json]
+pub fn Schema::new(SchemaForm) -> Self
+pub fn Schema::optional_properties(Self) -> Map[String, Self]?
+pub fn Schema::properties(Map[String, Self], Map[String, Self], Bool) -> Self
+pub fn Schema::ref(String) -> Self
+pub fn Schema::ref_name(Self) -> String?
+pub fn Schema::required_properties(Self) -> Map[String, Self]?
+pub fn Schema::type_(JtdType) -> Self
+pub fn Schema::type_kind(Self) -> JtdType?
+pub fn Schema::value_schema(Self) -> Self?
+pub fn Schema::values(Self) -> Self
+pub fn Schema::with_metadata(Self, Map[String, Json]) -> Self
+pub fn Schema::with_nullable(Self, Bool) -> Self
+
+pub(all) struct SchemaDocument {
+  root : Schema
+  definitions : Map[String, Schema]
+} derive(@debug.Debug)
+pub fn SchemaDocument::definition(Self, String) -> Schema?
+pub fn SchemaDocument::definition_count(Self) -> Int
+pub fn SchemaDocument::definition_names(Self) -> Array[String]
+pub fn SchemaDocument::definitions(Self) -> Map[String, Schema]
+pub fn SchemaDocument::has_definition(Self, String) -> Bool
+pub fn SchemaDocument::new(Schema, definitions? : Map[String, Schema]) -> Self
+pub fn SchemaDocument::root(Self) -> Schema
+
+pub(all) enum SchemaForm {
+  EmptyForm
+  RefForm(String)
+  TypeForm(JtdType)
+  EnumForm(Array[String])
+  ElementsForm(Schema)
+  PropertiesForm(Map[String, Schema], Map[String, Schema], Bool)
+  ValuesForm(Schema)
+  DiscriminatorForm(String, Map[String, Schema])
+} derive(@debug.Debug)
+
+// Type aliases
+
+// Traits
