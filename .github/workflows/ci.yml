@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install MoonBit
+        shell: bash
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Format
+        run: moon fmt --check
+
+      - name: JavaScript checks and tests
+        run: |
+          moon check --target js
+          moon test --target js
+
+      - name: Wasm-GC checks and tests
+        run: |
+          moon check --target wasm-gc
+          moon test --target wasm-gc
+
+      - name: Native checks and tests
+        run: |
+          moon check --target native
+          moon test --target native
+
+      - name: Public interface is current
+        run: |
+          moon info
+          git diff --exit-code
+
+      - name: Library coverage gate
+        shell: pwsh
+        run: ./scripts/coverage.ps1 -MinimumPercent 75
+
+      - name: Runnable examples
+        run: |
+          moon run examples/quickstart --target js
+          moon run examples/codegen --target js
+
+      - name: CLI smoke tests
+        shell: bash
+        run: |
+          moon run cmd/main --target js -- --version
+          moon run cmd/main --target js -- check fixtures/user.jtd.json
+          moon run cmd/main --target js -- validate fixtures/user.jtd.json fixtures/user-valid.json
+          moon run cmd/main --target js -- inspect fixtures/user.jtd.json
+          moon run cmd/main --target js -- generate fixtures/user.jtd.json User _build/user.generated.mbt
+          moon run cmd/main --target js -- format fixtures/user.jtd.json _build/user.formatted.json
+
+      - name: Repository release audit
+        shell: pwsh
+        run: ./scripts/audit.ps1
