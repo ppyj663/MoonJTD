@@ -105,3 +105,24 @@
 1. Gate format, check, tests, coverage, examples, source-line count, and provenance.
 2. Run all gates locally on supported targets.
 3. Commit `ci: enforce MoonJTD release quality gates`.
+
+## Final implementation notes
+
+This file records the plan before implementation. The delivered MVP preserves
+the architecture and acceptance criteria but made these reviewed adjustments:
+
+- Resource-limit behavior lives in `validate.mbt` and `schema_check.mbt`
+  instead of a separate `limits.mbt`, keeping limits adjacent to the traversal
+  state they constrain.
+- Type generation is implemented in `codegen.mbt`. JSON encoding and decoding
+  are provided by the schema-bound codec in `codec.mbt`; the MVP does not claim
+  to generate statically typed codec source.
+- The CLI package is `cmd/main`, with separate runnable examples under
+  `examples/`.
+- Upstream conformance data is not vendored because its repository declares no
+  license. `scripts/conformance.ps1` downloads two files from a fixed revision,
+  verifies both SHA-256 digests, and invokes `cmd/conformance` from ignored
+  build storage.
+- The final history contains two reviewed merge commits and more than ten
+  focused non-merge commits. Exact feature-to-commit mapping is recorded in
+  `docs/development-log.md`.
