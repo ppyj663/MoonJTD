@@ -16,6 +16,12 @@ pub fn check_schema(SchemaDocument) -> Array[Diagnostic]
 
 pub fn check_schema_with(SchemaDocument, SchemaCheckOptions) -> Array[Diagnostic]
 
+pub fn codec_error_diagnostics(CodecError) -> Array[Diagnostic]
+
+pub fn codec_error_message(CodecError) -> String
+
+pub fn codec_from_schema(StringView, options? : ValidationOptions) -> Result[JtdCodec, CodecError]
+
 pub fn diagnostic_to_json(Diagnostic) -> Json
 
 pub fn diagnostics_to_json(Array[Diagnostic]) -> Json
@@ -133,6 +139,12 @@ pub fn validation_report_to_json(ValidationReport) -> Json
 pub fn version_banner() -> String
 
 // Errors
+pub(all) suberror CodecError {
+  CodecInvalidSchema(Array[Diagnostic])
+  CodecInvalidJson(String)
+  CodecValidationFailed(Array[Diagnostic])
+} derive(Eq, @debug.Debug)
+
 pub(all) suberror CodegenError {
   CodegenDiagnostic(Diagnostic)
 } derive(Eq, @debug.Debug)
@@ -228,6 +240,20 @@ pub fn JsonPointer::property(Self, String) -> Self
 pub fn JsonPointer::root() -> Self
 pub fn JsonPointer::segments_copy(Self) -> Array[PathSegment]
 pub fn JsonPointer::to_string(Self) -> String
+
+pub(all) struct JtdCodec {
+  document : SchemaDocument
+  options : ValidationOptions
+} derive(@debug.Debug)
+pub fn JtdCodec::decode(Self, StringView) -> Result[ValidatedJson, CodecError]
+pub fn JtdCodec::decode_batch(Self, Array[Json]) -> Array[Result[ValidatedJson, CodecError]]
+pub fn JtdCodec::decode_json(Self, Json) -> Result[ValidatedJson, CodecError]
+pub fn JtdCodec::decode_json_array(Self, StringView) -> Result[Array[ValidatedJson], CodecError]
+pub fn JtdCodec::document(Self) -> SchemaDocument
+pub fn JtdCodec::encode_json(Self, Json, escape_slash? : Bool) -> Result[String, CodecError]
+pub fn JtdCodec::encode_validated(Self, ValidatedJson, escape_slash? : Bool) -> String
+pub fn JtdCodec::new(SchemaDocument, options? : ValidationOptions) -> Result[Self, CodecError]
+pub fn JtdCodec::options(Self) -> ValidationOptions
 
 pub(all) enum JtdType {
   BooleanType
@@ -382,6 +408,12 @@ pub fn SchemaStats::required_property_count(Self) -> Int
 pub fn SchemaStats::to_string(Self) -> String
 pub fn SchemaStats::type_count(Self) -> Int
 pub fn SchemaStats::values_count(Self) -> Int
+
+pub(all) struct ValidatedJson {
+  value : Json
+} derive(Eq, @debug.Debug)
+pub fn ValidatedJson::stringify(Self, escape_slash? : Bool) -> String
+pub fn ValidatedJson::value(Self) -> Json
 
 pub(all) struct ValidationOptions {
   max_errors : Int
