@@ -3,7 +3,7 @@
 MoonJTD is a MoonBit-native implementation of JSON Type Definition (JTD), as
 specified by RFC 8927. It validates schemas and JSON instances, emits standard
 `instancePath` / `schemaPath` diagnostics, and generates idiomatic MoonBit
-types and JSON codecs.
+types and a schema-bound JSON codec API.
 
 ## Why JTD
 
@@ -16,7 +16,7 @@ types matter more than arbitrary validation constraints.
 ## Project status
 
 The MVP contains the complete eight-form JTD data model, strict schema checks,
-bounded validation, MoonBit type generation, a builder API, schema analysis,
+bounded validation, MoonBit type generation, a validated JSON codec API, a builder API, schema analysis,
 machine-readable reports, a CLI, runnable examples, and multi-target CI.
 
 JTD is an Experimental RFC rather than an IETF Standards Track specification.

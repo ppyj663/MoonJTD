@@ -10,7 +10,125 @@ pub const SPECIFICATION : String = "RFC 8927"
 
 pub const VERSION : String = "0.1.0"
 
+pub fn analyze_schema(SchemaDocument) -> SchemaStats
+
+pub fn check_schema(SchemaDocument) -> Array[Diagnostic]
+
+pub fn check_schema_with(SchemaDocument, SchemaCheckOptions) -> Array[Diagnostic]
+
+pub fn diagnostic_to_json(Diagnostic) -> Json
+
+pub fn diagnostics_to_json(Array[Diagnostic]) -> Json
+
+pub fn diagnostics_to_string(Array[Diagnostic], pretty? : Bool) -> String
+
+pub fn generate_moonbit_types(SchemaDocument, root_name? : String) -> Result[String, CodegenError]
+
+pub fn generate_moonbit_types_with(SchemaDocument, CodegenOptions) -> Result[String, CodegenError]
+
+pub fn is_rfc3339_timestamp(String) -> Bool
+
+pub fn json_kind(Json) -> String
+
+pub fn jtd_any() -> Schema
+
+pub fn jtd_array(Schema) -> Schema
+
+pub fn jtd_boolean() -> Schema
+
+pub fn jtd_document(Schema) -> DocumentBuilder
+
+pub fn jtd_enum(Array[String]) -> Schema
+
+pub fn jtd_float32() -> Schema
+
+pub fn jtd_float64() -> Schema
+
+pub fn jtd_int16() -> Schema
+
+pub fn jtd_int32() -> Schema
+
+pub fn jtd_int8() -> Schema
+
+pub fn jtd_map(Schema) -> Schema
+
+pub fn jtd_object() -> ObjectSchemaBuilder
+
+pub fn jtd_reference(String) -> Schema
+
+pub fn jtd_string() -> Schema
+
+pub fn jtd_timestamp() -> Schema
+
 pub fn jtd_type_from_name(String) -> JtdType?
+
+pub fn jtd_uint16() -> Schema
+
+pub fn jtd_uint32() -> Schema
+
+pub fn jtd_uint8() -> Schema
+
+pub fn jtd_union(String) -> DiscriminatorSchemaBuilder
+
+pub fn lint_schema(SchemaDocument) -> Array[Diagnostic]
+
+pub fn moon_field_name(String) -> String
+
+pub fn moon_type_name(String) -> String
+
+pub fn parse_checked_schema(StringView) -> Result[SchemaDocument, Array[Diagnostic]]
+
+pub fn parse_schema(StringView) -> Result[SchemaDocument, SchemaError]
+
+pub fn parse_schema_json(Json) -> Result[SchemaDocument, SchemaError]
+
+pub fn referenced_definitions(SchemaDocument) -> Array[String]
+
+pub fn rfc3339_day(String) -> Int?
+
+pub fn rfc3339_hour(String) -> Int?
+
+pub fn rfc3339_minute(String) -> Int?
+
+pub fn rfc3339_month(String) -> Int?
+
+pub fn rfc3339_second(String) -> Int?
+
+pub fn rfc3339_year(String) -> Int?
+
+pub fn scalar_accepts(JtdType, Json) -> Bool
+
+pub fn scalar_expectation(JtdType) -> String
+
+pub fn schema_inventory(SchemaDocument) -> Array[SchemaNodeInfo]
+
+pub fn schema_node_info_to_json(SchemaNodeInfo) -> Json
+
+pub fn schema_report_json(SchemaDocument) -> Json
+
+pub fn schema_report_markdown(SchemaDocument) -> String
+
+pub fn schema_report_string(SchemaDocument, pretty? : Bool) -> String
+
+pub fn schema_shape(Schema) -> String
+
+pub fn schema_stats_to_json(SchemaStats) -> Json
+
+pub fn schema_to_json(SchemaDocument) -> Json
+
+pub fn schema_to_pretty_string(SchemaDocument, indent? : Int) -> String
+
+pub fn schema_to_string(SchemaDocument) -> String
+
+pub fn unused_definitions(SchemaDocument) -> Array[String]
+
+pub fn validate(SchemaDocument, Json) -> Array[Diagnostic]
+
+pub fn validate_json_text(SchemaDocument, StringView) -> Result[Array[Diagnostic], Diagnostic]
+
+pub fn validate_with(SchemaDocument, Json, ValidationOptions) -> ValidationReport
+
+pub fn validation_report_to_json(ValidationReport) -> Json
 
 pub fn version_banner() -> String
 
@@ -24,6 +142,17 @@ pub(all) suberror SchemaError {
 } derive(Eq, @debug.Debug)
 
 // Types and methods
+pub(all) struct CodegenOptions {
+  root_name : String
+  public_types : Bool
+  derive_eq : Bool
+  derive_debug : Bool
+  header : Bool
+} derive(Eq, @debug.Debug)
+pub fn CodegenOptions::default() -> Self
+pub fn CodegenOptions::new(root_name? : String, public_types? : Bool, derive_eq? : Bool, derive_debug? : Bool, header? : Bool) -> Self
+pub fn CodegenOptions::root_name(Self) -> String
+
 pub(all) struct Diagnostic {
   code : DiagnosticCode
   message : String
@@ -62,6 +191,28 @@ pub(all) enum DiagnosticCode {
 } derive(Eq, @debug.Debug)
 pub fn DiagnosticCode::name(Self) -> String
 
+pub(all) struct DiscriminatorSchemaBuilder {
+  tag : String
+  mapping : Map[String, Schema]
+  nullable : Bool
+  metadata : Map[String, Json]
+} derive(@debug.Debug)
+pub fn DiscriminatorSchemaBuilder::branch(Self, String, Schema) -> Self
+pub fn DiscriminatorSchemaBuilder::branch_count(Self) -> Int
+pub fn DiscriminatorSchemaBuilder::build(Self) -> Result[Schema, Diagnostic]
+pub fn DiscriminatorSchemaBuilder::metadata_entry(Self, String, Json) -> Self
+pub fn DiscriminatorSchemaBuilder::new(String) -> Self
+pub fn DiscriminatorSchemaBuilder::nullable(Self, Bool) -> Self
+
+pub(all) struct DocumentBuilder {
+  root : Schema
+  definitions : Map[String, Schema]
+} derive(@debug.Debug)
+pub fn DocumentBuilder::build(Self) -> Result[SchemaDocument, Array[Diagnostic]]
+pub fn DocumentBuilder::definition(Self, String, Schema) -> Self
+pub fn DocumentBuilder::definition_count(Self) -> Int
+pub fn DocumentBuilder::new(Schema) -> Self
+
 pub(all) struct JsonPointer {
   segments : Array[PathSegment]
 } derive(Eq, @debug.Debug)
@@ -98,6 +249,23 @@ pub fn JtdType::maximum(Self) -> Double?
 pub fn JtdType::minimum(Self) -> Double?
 pub fn JtdType::name(Self) -> String
 
+pub(all) struct ObjectSchemaBuilder {
+  required : Map[String, Schema]
+  optional : Map[String, Schema]
+  additional : Bool
+  nullable : Bool
+  metadata : Map[String, Json]
+} derive(@debug.Debug)
+pub fn ObjectSchemaBuilder::allow_additional(Self, Bool) -> Self
+pub fn ObjectSchemaBuilder::build(Self) -> Result[Schema, Diagnostic]
+pub fn ObjectSchemaBuilder::metadata_entry(Self, String, Json) -> Self
+pub fn ObjectSchemaBuilder::new() -> Self
+pub fn ObjectSchemaBuilder::nullable(Self, Bool) -> Self
+pub fn ObjectSchemaBuilder::optional(Self, String, Schema) -> Self
+pub fn ObjectSchemaBuilder::optional_count(Self) -> Int
+pub fn ObjectSchemaBuilder::required(Self, String, Schema) -> Self
+pub fn ObjectSchemaBuilder::required_count(Self) -> Int
+
 pub(all) enum PathSegment {
   Property(String)
   Index(Int)
@@ -124,8 +292,8 @@ pub fn Schema::metadata(Self) -> Map[String, Json]
 pub fn Schema::new(SchemaForm) -> Self
 pub fn Schema::optional_properties(Self) -> Map[String, Self]?
 pub fn Schema::properties(Map[String, Self], Map[String, Self], Bool) -> Self
-pub fn Schema::ref(String) -> Self
 pub fn Schema::ref_name(Self) -> String?
+pub fn Schema::reference(String) -> Self
 pub fn Schema::required_properties(Self) -> Map[String, Self]?
 pub fn Schema::type_(JtdType) -> Self
 pub fn Schema::type_kind(Self) -> JtdType?
@@ -133,6 +301,17 @@ pub fn Schema::value_schema(Self) -> Self?
 pub fn Schema::values(Self) -> Self
 pub fn Schema::with_metadata(Self, Map[String, Json]) -> Self
 pub fn Schema::with_nullable(Self, Bool) -> Self
+
+pub(all) struct SchemaCheckOptions {
+  max_depth : Int
+  max_nodes : Int
+  max_errors : Int
+} derive(Eq, @debug.Debug)
+pub fn SchemaCheckOptions::default() -> Self
+pub fn SchemaCheckOptions::max_depth(Self) -> Int
+pub fn SchemaCheckOptions::max_errors(Self) -> Int
+pub fn SchemaCheckOptions::max_nodes(Self) -> Int
+pub fn SchemaCheckOptions::new(max_depth? : Int, max_nodes? : Int, max_errors? : Int) -> Self
 
 pub(all) struct SchemaDocument {
   root : Schema
@@ -156,6 +335,76 @@ pub(all) enum SchemaForm {
   ValuesForm(Schema)
   DiscriminatorForm(String, Map[String, Schema])
 } derive(@debug.Debug)
+
+pub(all) struct SchemaNodeInfo {
+  path : JsonPointer
+  form : String
+  shape : String
+  nullable : Bool
+  child_count : Int
+} derive(Eq, @debug.Debug)
+pub fn SchemaNodeInfo::child_count(Self) -> Int
+pub fn SchemaNodeInfo::form(Self) -> String
+pub fn SchemaNodeInfo::is_nullable(Self) -> Bool
+pub fn SchemaNodeInfo::path(Self) -> JsonPointer
+pub fn SchemaNodeInfo::shape(Self) -> String
+
+pub(all) struct SchemaStats {
+  node_count : Int
+  max_depth : Int
+  definition_count : Int
+  reference_count : Int
+  nullable_count : Int
+  empty_count : Int
+  type_count : Int
+  enum_count : Int
+  elements_count : Int
+  properties_count : Int
+  values_count : Int
+  discriminator_count : Int
+  required_property_count : Int
+  optional_property_count : Int
+  discriminator_branch_count : Int
+} derive(Eq, @debug.Debug)
+pub fn SchemaStats::definition_count(Self) -> Int
+pub fn SchemaStats::discriminator_branch_count(Self) -> Int
+pub fn SchemaStats::discriminator_count(Self) -> Int
+pub fn SchemaStats::elements_count(Self) -> Int
+pub fn SchemaStats::empty_count(Self) -> Int
+pub fn SchemaStats::enum_count(Self) -> Int
+pub fn SchemaStats::max_depth(Self) -> Int
+pub fn SchemaStats::node_count(Self) -> Int
+pub fn SchemaStats::nullable_count(Self) -> Int
+pub fn SchemaStats::optional_property_count(Self) -> Int
+pub fn SchemaStats::properties_count(Self) -> Int
+pub fn SchemaStats::reference_count(Self) -> Int
+pub fn SchemaStats::required_property_count(Self) -> Int
+pub fn SchemaStats::to_string(Self) -> String
+pub fn SchemaStats::type_count(Self) -> Int
+pub fn SchemaStats::values_count(Self) -> Int
+
+pub(all) struct ValidationOptions {
+  max_errors : Int
+  max_depth : Int
+  max_ref_depth : Int
+  max_nodes : Int
+} derive(Eq, @debug.Debug)
+pub fn ValidationOptions::default() -> Self
+pub fn ValidationOptions::max_depth(Self) -> Int
+pub fn ValidationOptions::max_errors(Self) -> Int
+pub fn ValidationOptions::max_nodes(Self) -> Int
+pub fn ValidationOptions::max_ref_depth(Self) -> Int
+pub fn ValidationOptions::new(max_errors? : Int, max_depth? : Int, max_ref_depth? : Int, max_nodes? : Int) -> Self
+
+pub(all) struct ValidationReport {
+  errors : Array[Diagnostic]
+  visited_nodes : Int
+  truncated : Bool
+} derive(@debug.Debug)
+pub fn ValidationReport::errors(Self) -> Array[Diagnostic]
+pub fn ValidationReport::is_truncated(Self) -> Bool
+pub fn ValidationReport::is_valid(Self) -> Bool
+pub fn ValidationReport::visited_nodes(Self) -> Int
 
 // Type aliases
 
