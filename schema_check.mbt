@@ -125,7 +125,18 @@ fn check_discriminator_branch(
   options : SchemaCheckOptions,
 ) -> Unit {
   match branch.form() {
-    PropertiesForm(required, optional, _) =>
+    PropertiesForm(required, optional, _) => {
+      if branch.is_nullable() {
+        add_check_error(
+          errors,
+          options,
+          check_diagnostic(
+            InvalidDiscriminatorMapping,
+            "discriminator mapping branches cannot be nullable",
+            path.property("nullable"),
+          ),
+        )
+      }
       if required.contains(tag) || optional.contains(tag) {
         add_check_error(
           errors,
@@ -141,6 +152,7 @@ fn check_discriminator_branch(
           ),
         )
       }
+    }
     _ =>
       add_check_error(
         errors,

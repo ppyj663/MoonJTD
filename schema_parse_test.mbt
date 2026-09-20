@@ -82,12 +82,36 @@ test "parse discriminator form" {
 }
 
 ///|
-test "parse nullable metadata and additional data" {
+test "parse nullable metadata" {
   let root = parsed(
-    "{\"type\":\"string\",\"nullable\":true,\"metadata\":{\"title\":\"Name\"},\"vendorExtension\":42}",
+    "{\"type\":\"string\",\"nullable\":true,\"metadata\":{\"title\":\"Name\"}}",
   ).root()
   assert_true(root.is_nullable())
   assert_true(root.metadata().contains("title"))
+}
+
+///|
+test "reject unknown keyword" {
+  assert_eq(
+    parse_error_code("{\"type\":\"string\",\"vendorExtension\":42}"),
+    @moonjtd.UnknownKeyword,
+  )
+}
+
+///|
+test "reject additionalProperties without properties form" {
+  assert_eq(
+    parse_error_code("{\"additionalProperties\":true}"),
+    @moonjtd.InvalidMemberType,
+  )
+}
+
+///|
+test "reject additionalProperties mixed with another form" {
+  assert_eq(
+    parse_error_code("{\"elements\":{},\"additionalProperties\":true}"),
+    @moonjtd.MixedSchemaForms,
+  )
 }
 
 ///|
