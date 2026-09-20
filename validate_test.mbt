@@ -180,3 +180,15 @@ test "invalid validation options fail closed" {
   assert_false(report.is_valid())
   assert_true(report.is_truncated())
 }
+
+///|
+test "properties object mismatch points to defining form keyword" {
+  let required = validation_errors(
+    "{\"properties\":{\"name\":{\"type\":\"string\"}}}", "null",
+  )
+  assert_eq(required[0].schema_path().to_string(), "/properties")
+  let optional = validation_errors(
+    "{\"optionalProperties\":{\"name\":{\"type\":\"string\"}}}", "null",
+  )
+  assert_eq(optional[0].schema_path().to_string(), "/optionalProperties")
+}

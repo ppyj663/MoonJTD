@@ -12,6 +12,7 @@ $requiredFiles = @(
   "THIRD_PARTY_NOTICES.md",
   "moon.mod",
   ".github/workflows/ci.yml",
+  "docs/conformance.md",
   "docs/plans/2026-09-19-moonjtd-design.md",
   "docs/plans/2026-09-19-moonjtd-implementation.md"
 )
@@ -73,7 +74,7 @@ if ($commitCount -lt $MinimumCommits) {
 }
 
 $noticeText = Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot "THIRD_PARTY_NOTICES.md")
-foreach ($term in @('RFC 8927', 'AI assistance', 'does not copy')) {
+foreach ($term in @('RFC 8927', 'AI assistance', 'does not copy', '71ca275847318717c36f5a2322a8061070fe185d')) {
   if (-not $noticeText.Contains($term)) {
     throw "THIRD_PARTY_NOTICES.md is missing disclosure text: $term"
   }

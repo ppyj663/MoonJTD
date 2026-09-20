@@ -36,6 +36,10 @@ jobs:
           moon check --target native
           moon test --target native
 
+      - name: RFC 8927 conformance corpus
+        shell: pwsh
+        run: ./scripts/conformance.ps1
+
       - name: Public interface is current
         run: |
           moon info

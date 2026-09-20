@@ -52,6 +52,15 @@ test "mapping branch cannot redeclare discriminator" {
 }
 
 ///|
+test "mapping branch cannot be nullable" {
+  let errors = checked_errors(
+    "{\"discriminator\":\"kind\",\"mapping\":{\"circle\":{\"properties\":{},\"nullable\":true}}}",
+  )
+  assert_eq(errors[0].code(), @moonjtd.InvalidDiscriminatorMapping)
+  assert_eq(errors[0].schema_path().to_string(), "/mapping/circle/nullable")
+}
+
+///|
 test "parse checked schema combines phases" {
   guard @moonjtd.parse_checked_schema("{\"ref\":\"missing\"}") is Err(errors) else {
     abort("expected semantic errors")

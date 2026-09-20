@@ -104,7 +104,9 @@ fn form_keyword_count(object : Map[String, Json]) -> Int {
   if object.contains("elements") {
     count += 1
   }
-  if object.contains("properties") || object.contains("optionalProperties") {
+  if object.contains("properties") ||
+    object.contains("optionalProperties") ||
+    object.contains("additionalProperties") {
     count += 1
   }
   if object.contains("values") {
@@ -114,6 +116,49 @@ fn form_keyword_count(object : Map[String, Json]) -> Int {
     count += 1
   }
   count
+}
+
+///|
+fn is_shared_keyword(name : String, root : Bool) -> Bool {
+  name == "nullable" || name == "metadata" || (root && name == "definitions")
+}
+
+///|
+fn is_form_keyword(form : SchemaForm, name : String) -> Bool {
+  match form {
+    EmptyForm => false
+    RefForm(_) => name == "ref"
+    TypeForm(_) => name == "type"
+    EnumForm(_) => name == "enum"
+    ElementsForm(_) => name == "elements"
+    PropertiesForm(_, _, _) =>
+      name == "properties" ||
+      name == "optionalProperties" ||
+      name == "additionalProperties"
+    ValuesForm(_) => name == "values"
+    DiscriminatorForm(_, _) => name == "discriminator" || name == "mapping"
+  }
+}
+
+///|
+fn check_schema_keywords(
+  object : Map[String, Json],
+  form : SchemaForm,
+  path : JsonPointer,
+  root : Bool,
+) -> Result[Unit, SchemaError] {
+  for name, _ in object {
+    if !is_shared_keyword(name, root) && !is_form_keyword(form, name) {
+      return Err(
+        schema_error(
+          UnknownKeyword,
+          "keyword '" + name + "' is not allowed in this JTD schema form",
+          path.property(name),
+        ),
+      )
+    }
+  }
+  Ok(())
 }
 
 ///|
@@ -338,8 +383,12 @@ fn parse_schema_node(
     Ok(value) => value
     Err(error) => return Err(error)
   }
-  match parse_form(object, path) {
-    Ok(form) =>
+  let form = match parse_form(object, path) {
+    Ok(value) => value
+    Err(error) => return Err(error)
+  }
+  match check_schema_keywords(object, form, path, root) {
+    Ok(_) =>
       Ok(Schema::new(form).with_nullable(nullable).with_metadata(metadata))
     Err(error) => Err(error)
   }
