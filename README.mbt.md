@@ -16,8 +16,10 @@ types matter more than arbitrary validation constraints.
 ## Project status
 
 The MVP contains the complete eight-form JTD data model, strict schema checks,
-bounded validation, MoonBit type generation, a validated JSON codec API, a builder API, schema analysis,
-machine-readable reports, a CLI, runnable examples, and multi-target CI.
+bounded validation, MoonBit type generation, a validated JSON codec API, a
+builder API, schema analysis, machine-readable reports, a CLI, runnable
+examples, and multi-target CI. The hash-pinned upstream conformance corpus
+currently passes all 316 validation cases and all 49 invalid-schema cases.
 
 JTD is an Experimental RFC rather than an IETF Standards Track specification.
 MoonJTD states that status explicitly and targets the published RFC semantics.
@@ -104,7 +106,14 @@ moon test --target js
 moon test --target wasm-gc
 moon test --target native
 moon coverage analyze
+pwsh ./scripts/conformance.ps1
 ```
+
+The conformance script downloads two data files from a fixed upstream commit,
+checks their SHA-256 digests, and keeps them under ignored `_build/` storage.
+The files are not redistributed by MoonJTD because their upstream repository
+does not declare a license. See `docs/conformance.md` for the exact revision,
+hashes, runner behavior, and reproducibility notes.
 
 ## Standards and provenance
 
