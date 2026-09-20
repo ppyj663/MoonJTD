@@ -7,6 +7,7 @@ $ErrorActionPreference = "Stop"
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 
 $requiredFiles = @(
+  "README.md",
   "README.mbt.md",
   "LICENSE",
   "THIRD_PARTY_NOTICES.md",
@@ -64,6 +65,10 @@ foreach ($file in $authoredFiles) {
 }
 
 $readmeText = Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot "README.mbt.md")
+$githubReadmeText = Get-Content -Raw -LiteralPath (Join-Path $repositoryRoot "README.md")
+if ($githubReadmeText -ne $readmeText) {
+  throw "README.md and README.mbt.md differ; keep the GitHub and MoonBit documentation synchronized."
+}
 foreach ($term in @(
   '## Repository structure',
   '## Current release status',
