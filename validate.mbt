@@ -416,11 +416,16 @@ fn validate_properties_form(
   state : ValidationState,
 ) -> Unit {
   guard value is Object(object) else {
+    let form_path = if !required.is_empty() || optional.is_empty() {
+      schema_path.property("properties")
+    } else {
+      schema_path.property("optionalProperties")
+    }
     state.push(
       ValidationMismatch,
       "expected object, found " + json_kind(value),
       instance_path,
-      schema_path,
+      form_path,
     )
     return
   }
