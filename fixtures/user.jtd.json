@@ -1,0 +1,28 @@
+{
+  "definitions": {
+    "user-id": {
+      "type": "uint32"
+    }
+  },
+  "properties": {
+    "id": {
+      "ref": "user-id"
+    },
+    "name": {
+      "type": "string"
+    }
+  },
+  "optionalProperties": {
+    "email": {
+      "type": "string",
+      "nullable": true
+    },
+    "createdAt": {
+      "type": "timestamp"
+    }
+  },
+  "metadata": {
+    "title": "User",
+    "description": "MoonJTD CLI and documentation fixture"
+  }
+}
