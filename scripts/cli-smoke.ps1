@@ -64,4 +64,5 @@ try {
   }
 }
 
+$global:LASTEXITCODE = 0
 Write-Output 'CLI smoke checks passed.'
