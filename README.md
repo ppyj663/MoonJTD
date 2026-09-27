@@ -35,8 +35,13 @@ platform.
 
 ## Current release status
 
-MoonJTD is currently a source release and has not yet been published to
-Mooncakes. Clone the repository to evaluate the library, CLI, and examples:
+MoonJTD 0.1.1 is published on Mooncakes. Install the package with:
+
+```bash
+moon add ppyj663/moonjtd@0.1.1
+```
+
+To evaluate the source, CLI, and examples directly from GitHub:
 
 ```bash
 git clone https://github.com/ppyj663/MoonJTD.git
@@ -45,9 +50,7 @@ moon test --target js
 moon run examples/quickstart --target js
 ```
 
-After the package is published, the intended installation command is
-`moon add ppyj663/moonjtd`. Until then, the Git repository is the authoritative
-source.
+The Git repository remains the authoritative source for development.
 
 ## Library example
 
