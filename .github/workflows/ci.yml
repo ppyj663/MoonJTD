@@ -21,6 +21,11 @@ jobs:
       - name: Record toolchain versions
         run: moon version --all
 
+      - name: Build supported library targets
+        run: |
+          moon build --target js
+          moon build --target wasm-gc
+
       - name: Format
         run: moon fmt --check
 
@@ -57,15 +62,9 @@ jobs:
           moon run examples/quickstart --target js
           moon run examples/codegen --target js
 
-      - name: CLI smoke tests
-        shell: bash
-        run: |
-          moon run cmd/main --target js -- --version
-          moon run cmd/main --target js -- check fixtures/user.jtd.json
-          moon run cmd/main --target js -- validate fixtures/user.jtd.json fixtures/user-valid.json
-          moon run cmd/main --target js -- inspect fixtures/user.jtd.json
-          moon run cmd/main --target js -- generate fixtures/user.jtd.json User _build/user.generated.mbt
-          moon run cmd/main --target js -- format fixtures/user.jtd.json _build/user.formatted.json
+      - name: CLI smoke and error-path checks
+        shell: pwsh
+        run: ./scripts/cli-smoke.ps1
 
       - name: Repository release audit
         shell: pwsh

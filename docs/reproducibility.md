@@ -23,11 +23,17 @@ For a local reproduction:
 ```powershell
 moon version --all
 moon fmt --check
+moon build --target js
+moon build --target wasm-gc
 moon check --target js
 moon test --target js
 moon check --target wasm-gc
 moon test --target wasm-gc
 moon check --target native
+moon test --target native
+moon run examples/quickstart --target js
+moon run examples/codegen --target js
+pwsh ./scripts/cli-smoke.ps1
 pwsh ./scripts/coverage.ps1 -MinimumPercent 75
 pwsh ./scripts/conformance.ps1
 pwsh ./scripts/audit.ps1

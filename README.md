@@ -88,6 +88,7 @@ moon run examples/codegen --target js
 ## CLI
 
 ```text
+moonjtd --help
 moonjtd check schema.jtd.json
 moonjtd validate schema.jtd.json instance.json
 moonjtd generate schema.jtd.json RootType output.mbt
@@ -98,7 +99,8 @@ moonjtd format schema.jtd.json output.json
 During development, replace `moonjtd` with `moon run cmd/main --target js --`.
 
 Exit status is `0` for success, `1` for an invalid schema/instance or failed
-generation, and `2` for usage or filesystem errors.
+generation, and `2` for usage or filesystem errors. Malformed JSON is an input
+error (`1`); a missing or unreadable file is a filesystem error (`2`).
 
 ## Repository structure
 
@@ -109,8 +111,8 @@ MoonJTD/
 ├── cmd/conformance/      # upstream RFC 8927 corpus runner
 ├── examples/             # runnable quickstart and code generation demos
 ├── fixtures/             # small, authored CLI smoke-test inputs
-├── docs/                 # design, implementation, provenance, and history
-├── scripts/              # coverage, conformance, and repository audits
+├── docs/                 # design, standards, provenance, and history
+├── scripts/              # CLI smoke checks, coverage, conformance, and audit
 └── .github/workflows/    # multi-target continuous integration
 ```
 
@@ -128,21 +130,23 @@ of overflowing the runtime stack indefinitely.
 ## Testing
 
 ```bash
+moon build --target js
+moon build --target wasm-gc
 moon fmt --check
 moon check --target js
 moon test --target js
+moon check --target wasm-gc
 moon test --target wasm-gc
+moon check --target native
 moon test --target native
 moon coverage analyze
 pwsh ./scripts/conformance.ps1
 pwsh ./scripts/audit.ps1
+pwsh ./scripts/cli-smoke.ps1
 ```
 
-The audited source totals are 4,389 authored product MoonBit lines (3,930
-portable library lines plus 459 CLI/conformance-runner lines), excluding 70
-example lines, 824 test lines, generated interfaces, and build output. The
-complete MoonBit tree contains 5,283 lines. The release audit requires at least
-4,000 authored product lines and 10 Git commits.
+Native tests require a C compiler (`clang`, `gcc`, `cc`, or MSVC `cl`). Native
+static checking does not require one.
 
 The conformance script downloads two data files from a fixed upstream commit,
 checks their SHA-256 digests, and keeps them under ignored `_build/` storage.

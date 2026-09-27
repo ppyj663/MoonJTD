@@ -37,6 +37,7 @@ fn usage() -> Unit {
   println("  moonjtd generate <schema.jtd.json> <RootType> [output.mbt]")
   println("  moonjtd inspect <schema.jtd.json>")
   println("  moonjtd format <schema.jtd.json> [output.json]")
+  println("  moonjtd --help")
   println("  moonjtd --version")
 }
 
@@ -65,37 +66,37 @@ fn print_diagnostics(diagnostics : Array[@jtd.Diagnostic]) -> Unit {
 }
 
 ///|
-fn load_schema(path : String) -> @jtd.SchemaDocument? {
+fn load_schema(path : String) -> Result[@jtd.SchemaDocument, Int] {
   let text = match read_text_file(path) {
     Some(value) => value
     None => {
       println("error: cannot read schema file " + path)
-      return None
+      return Err(2)
     }
   }
   match @jtd.parse_checked_schema(text) {
-    Ok(document) => Some(document)
+    Ok(document) => Ok(document)
     Err(diagnostics) => {
       println("error: invalid JTD schema " + path)
       print_diagnostics(diagnostics)
-      None
+      Err(1)
     }
   }
 }
 
 ///|
-fn load_json(path : String) -> Json? {
-  let text = match read_text_file(path) {
-    Some(value) => value
+fn load_json(path : String) -> Result[Json, Int] {
+  match read_text_file(path) {
+    Some(text) =>
+      Ok(@json.parse(text)) catch {
+        error => {
+          println("error: invalid JSON in " + path + ": " + error.to_string())
+          Err(1)
+        }
+      }
     None => {
       println("error: cannot read JSON file " + path)
-      return None
-    }
-  }
-  Some(@json.parse(text)) catch {
-    error => {
-      println("error: invalid JSON in " + path + ": " + error.to_string())
-      None
+      Err(2)
     }
   }
 }
@@ -107,8 +108,8 @@ fn run_check(args : Array[String], index : Int) -> Int {
     return 2
   }
   match load_schema(args[index + 1]) {
-    None => 1
-    Some(document) => {
+    Err(exit_code) => exit_code
+    Ok(document) => {
       let lint = @jtd.lint_schema(document)
       println("VALID")
       println(@jtd.analyze_schema(document).to_string())
@@ -128,12 +129,12 @@ fn run_validate(args : Array[String], index : Int) -> Int {
     return 2
   }
   let document = match load_schema(args[index + 1]) {
-    Some(value) => value
-    None => return 1
+    Ok(value) => value
+    Err(exit_code) => return exit_code
   }
   let value = match load_json(args[index + 2]) {
-    Some(value) => value
-    None => return 2
+    Ok(value) => value
+    Err(exit_code) => return exit_code
   }
   let report = @jtd.validate_with(
     document,
@@ -161,8 +162,8 @@ fn run_generate(args : Array[String], index : Int) -> Int {
     return 2
   }
   let document = match load_schema(args[index + 1]) {
-    Some(value) => value
-    None => return 1
+    Ok(value) => value
+    Err(exit_code) => return exit_code
   }
   let source = match
     @jtd.generate_moonbit_types(document, root_name=args[index + 2]) {
@@ -192,8 +193,8 @@ fn run_inspect(args : Array[String], index : Int) -> Int {
     return 2
   }
   let document = match load_schema(args[index + 1]) {
-    Some(value) => value
-    None => return 1
+    Ok(value) => value
+    Err(exit_code) => return exit_code
   }
   let stats = @jtd.analyze_schema(document)
   println("root form: " + document.root().form_name())
@@ -221,8 +222,8 @@ fn run_format(args : Array[String], index : Int) -> Int {
     return 2
   }
   let document = match load_schema(args[index + 1]) {
-    Some(value) => value
-    None => return 1
+    Ok(value) => value
+    Err(exit_code) => return exit_code
   }
   let output = @jtd.schema_to_pretty_string(document)
   if index + 2 < args.length() {
@@ -240,6 +241,12 @@ fn run_format(args : Array[String], index : Int) -> Int {
 
 ///|
 fn dispatch(args : Array[String]) -> Int {
+  for value in args {
+    if value == "--help" || value == "-h" {
+      usage()
+      return 0
+    }
+  }
   for value in args {
     if value == "--version" || value == "-V" {
       println(@jtd.version_banner())

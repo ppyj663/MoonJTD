@@ -6,7 +6,7 @@ reviewers can follow feature boundaries and verification work.
 
 ## Baseline and core model
 
-- `0bff7c4` establishes project metadata, licensing, and acceptance gates.
+- `0bff7c4` establishes project metadata, licensing, and quality checks.
 - `c4aaf30` defines the eight RFC 8927 schema forms and JSON Pointer model.
 - `dce5d2c` adds strict recursive schema parsing.
 - `0ff1c8c` adds bounded semantic schema checks.
@@ -26,7 +26,7 @@ reviewers can follow feature boundaries and verification work.
 
 ## Quality and conformance
 
-- `7af2d67` adds CI, coverage, source-size, provenance, example, and CLI gates.
+- `7af2d67` adds CI, coverage, provenance, example, and CLI checks.
 - Pull request `#1` merges the complete MVP without squashing its feature
   commits.
 - `01e76f9` enforces RFC 8927 keyword legality and discriminator constraints.
@@ -35,8 +35,7 @@ reviewers can follow feature boundaries and verification work.
 - `0501b84` makes all 365 upstream cases a required CI gate.
 - Pull request `#2` merges the conformance work without squashing it.
 
-At the conformance merge point `1aab926`, `main` contains 23 commits: 21
-focused non-merge commits and two merge commits. Several commits were created
-close together because the implementation was prepared and verified in staged
-feature slices. Commit timestamps are not presented as elapsed development
-time; the code, tests, diffs, PRs, and CI results are the review evidence.
+The command-line tool prints usage for `--help` and `-h`, and returns distinct
+exit statuses for invalid content and file access failures. The CLI smoke
+script exercises successful commands and expected error paths in local runs
+and CI.

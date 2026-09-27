@@ -29,12 +29,14 @@ generation without embedding filesystem behavior in the core library.
 
 Tests cover every schema form, every scalar boundary, RFC 3339 timestamps,
 reference resolution, JSON Pointer escaping, recursion limits, deterministic
-code generation, and malformed schemas. Vendored upstream fixtures carry
-their original license and pinned revision. CI runs formatting, checking,
-tests, coverage, examples, and repository-audit scripts on supported targets.
+code generation, and malformed schemas. The upstream conformance corpus is
+downloaded from a pinned revision and verified by hash; it is not vendored
+because its source repository does not declare a license. CI runs formatting,
+builds, checks, tests, coverage, examples, and repository-audit scripts on
+supported targets.
 
 ## Repository history
 
-Development uses a feature branch and at least ten focused commits. Generated
-or vendored material is never counted as authored MoonBit source. Source
-provenance and AI assistance are documented before release.
+The public Git history keeps feature boundaries reviewable. Generated files
+and external conformance data are not presented as authored source. Source
+provenance and AI assistance are documented in the third-party notices.
