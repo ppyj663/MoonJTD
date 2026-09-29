@@ -58,6 +58,20 @@ test "markdown report includes inventory table" {
 }
 
 ///|
+test "markdown report escapes schema-controlled table separators" {
+  let document = match
+    @moonjtd.parse_checked_schema(
+      "{\"properties\":{\"x|y\":{\"type\":\"string\"}}}",
+    ) {
+    Ok(value) => value
+    Err(_) => abort("schema")
+  }
+  let text = @moonjtd.schema_report_markdown(document)
+  assert_true(text.contains("/properties/x\\|y"))
+  assert_true(!text.contains("| /properties/x|y |"))
+}
+
+///|
 test "validation report JSON exposes bounded execution" {
   let report = @moonjtd.validate_with(
     report_document(),

@@ -1,0 +1,2 @@
+# Keep agent-only repository guidance out of published package archives.
+AGENTS.md

@@ -33,10 +33,15 @@ fn usage() -> Unit {
   println("MoonBit-native JSON Type Definition toolkit")
   println("Usage:")
   println("  moonjtd check <schema.jtd.json>")
-  println("  moonjtd validate <schema.jtd.json> <instance.json>")
+  println(
+    "  moonjtd validate <schema.jtd.json> <instance.json> [--format text|json]",
+  )
   println("  moonjtd generate <schema.jtd.json> <RootType> [output.mbt]")
   println("  moonjtd inspect <schema.jtd.json>")
   println("  moonjtd format <schema.jtd.json> [output.json]")
+  println(
+    "  moonjtd report <schema.jtd.json> [--format json|markdown] [output]",
+  )
   println("  moonjtd --help")
   println("  moonjtd --version")
 }
@@ -45,7 +50,7 @@ fn usage() -> Unit {
 fn find_command(args : Array[String]) -> (String, Int)? {
   for index, value in args {
     match value {
-      "check" | "validate" | "generate" | "inspect" | "format" =>
+      "check" | "validate" | "generate" | "inspect" | "format" | "report" =>
         return Some((value, index))
       _ => ()
     }
@@ -128,6 +133,25 @@ fn run_validate(args : Array[String], index : Int) -> Int {
     usage()
     return 2
   }
+  let mut format = "text"
+  let mut cursor = index + 3
+  while cursor < args.length() {
+    if args[cursor] != "--format" || cursor + 1 >= args.length() {
+      println("error: validate accepts --format text or json")
+      usage()
+      return 2
+    }
+    match args[cursor + 1] {
+      "text" => format = "text"
+      "json" => format = "json"
+      other => {
+        println("error: unsupported validation report format " + other)
+        usage()
+        return 2
+      }
+    }
+    cursor += 2
+  }
   let document = match load_schema(args[index + 1]) {
     Ok(value) => value
     Err(exit_code) => return exit_code
@@ -141,6 +165,12 @@ fn run_validate(args : Array[String], index : Int) -> Int {
     value,
     @jtd.ValidationOptions::default(),
   )
+  if format == "json" {
+    println(
+      @jtd.validation_report_to_json(report).stringify(escape_slash=false),
+    )
+    return if report.is_valid() { 0 } else { 1 }
+  }
   if report.is_valid() {
     println("VALID")
     println("visited nodes: " + report.visited_nodes().to_string())
@@ -240,6 +270,70 @@ fn run_format(args : Array[String], index : Int) -> Int {
 }
 
 ///|
+fn run_report(args : Array[String], index : Int) -> Int {
+  guard index + 1 < args.length() else {
+    usage()
+    return 2
+  }
+  let mut format = "json"
+  let mut output_path : String? = None
+  let mut cursor = index + 2
+  while cursor < args.length() {
+    let value = args[cursor]
+    if value == "--format" {
+      if cursor + 1 >= args.length() {
+        println("error: --format requires json or markdown")
+        usage()
+        return 2
+      }
+      match args[cursor + 1] {
+        "json" => format = "json"
+        "markdown" => format = "markdown"
+        other => {
+          println("error: unsupported report format " + other)
+          usage()
+          return 2
+        }
+      }
+      cursor += 2
+    } else if value.has_prefix("--") {
+      println("error: unknown report option " + value)
+      usage()
+      return 2
+    } else {
+      if output_path is Some(_) {
+        println("error: report accepts at most one output path")
+        usage()
+        return 2
+      }
+      output_path = Some(value)
+      cursor += 1
+    }
+  }
+  let document = match load_schema(args[index + 1]) {
+    Ok(value) => value
+    Err(exit_code) => return exit_code
+  }
+  let report = if format == "json" {
+    @jtd.schema_report_string(document)
+  } else {
+    @jtd.schema_report_markdown(document)
+  }
+  match output_path {
+    Some(path) => {
+      let contents = if format == "json" { report + "\n" } else { report }
+      if !write_text_file(path, contents) {
+        println("error: cannot write schema report " + path)
+        return 2
+      }
+      println("reported " + path)
+    }
+    None => println(report)
+  }
+  0
+}
+
+///|
 fn dispatch(args : Array[String]) -> Int {
   for value in args {
     if value == "--help" || value == "-h" {
@@ -263,6 +357,7 @@ fn dispatch(args : Array[String]) -> Int {
     Some(("generate", index)) => run_generate(args, index)
     Some(("inspect", index)) => run_inspect(args, index)
     Some(("format", index)) => run_format(args, index)
+    Some(("report", index)) => run_report(args, index)
     Some(_) => 2
   }
 }

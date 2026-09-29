@@ -1,20 +1,22 @@
 # Reproducibility
 
-The audited local baseline used this MoonBit toolchain:
+The current local toolchain, also used by the successful CI run on 2026-09-27,
+meets the committee's minimum compiler requirement `moonc v0.10.14+7d59c7ec9`:
 
 ```text
-moon 0.1.20260904 (94521db 2026-09-04)
-moonc v0.10.12+1634b282e (2026-09-07)
-moonrun 0.1.20260904 (94521db 2026-09-04)
+moon 0.1.20260920 (914d7da 2026-09-20)
+moonc v0.10.14+7d59c7ec9 (2026-09-18)
+moonrun 0.1.20260920 (914d7da 2026-09-20)
 ```
 
 The project depends only on `moonbitlang/core/json` and core runtime modules.
 Generated `pkg.generated.mbti` files are committed and checked by `moon info`
 in CI, so a public-interface drift fails the build.
 
-CI uses the official MoonBit Unix installer and prints the complete installed
-version before running checks. This deliberately tests the current supported
-toolchain while preserving the exact successful version in each Actions log.
+CI uses the official MoonBit Unix installer and verifies that `moonc` is at
+least `v0.10.14+7d59c7ec9` before running checks. The check accepts later
+compiler versions and rejects an unverified build with the same `0.10.14`
+version number. Each Actions log records the full installed toolchain version.
 The runner image is fixed to `ubuntu-24.04` instead of the moving
 `ubuntu-latest` alias.
 
@@ -22,6 +24,7 @@ For a local reproduction:
 
 ```powershell
 moon version --all
+pwsh ./scripts/check-toolchain.ps1
 moon fmt --check
 moon build --target js
 moon build --target wasm-gc

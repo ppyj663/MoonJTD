@@ -8,6 +8,7 @@ $requiredFiles = @(
   "THIRD_PARTY_NOTICES.md",
   "moon.mod",
   ".github/workflows/ci.yml",
+  "scripts/check-toolchain.ps1",
   "scripts/cli-smoke.ps1",
   "fixtures/invalid-schema.json",
   "fixtures/malformed-json.json",

@@ -8,7 +8,7 @@ import {
 // Values
 pub const SPECIFICATION : String = "RFC 8927"
 
-pub const VERSION : String = "0.1.0"
+pub const VERSION : String = "0.2.0"
 
 pub fn analyze_schema(SchemaDocument) -> SchemaStats
 
@@ -144,14 +144,32 @@ pub(all) suberror CodecError {
   CodecInvalidJson(String)
   CodecValidationFailed(Array[Diagnostic])
 } derive(Eq, @debug.Debug)
+#deprecated
+pub fn CodecError::equal(Self, Self) -> Bool
+#deprecated
+pub fn CodecError::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn CodecError::to_repr(Self) -> @debug.Repr
 
 pub(all) suberror CodegenError {
   CodegenDiagnostic(Diagnostic)
 } derive(Eq, @debug.Debug)
+#deprecated
+pub fn CodegenError::equal(Self, Self) -> Bool
+#deprecated
+pub fn CodegenError::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn CodegenError::to_repr(Self) -> @debug.Repr
 
 pub(all) suberror SchemaError {
   SchemaDiagnostic(Diagnostic)
 } derive(Eq, @debug.Debug)
+#deprecated
+pub fn SchemaError::equal(Self, Self) -> Bool
+#deprecated
+pub fn SchemaError::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn SchemaError::to_repr(Self) -> @debug.Repr
 
 // Types and methods
 pub(all) struct CodegenOptions {
@@ -162,8 +180,14 @@ pub(all) struct CodegenOptions {
   header : Bool
 } derive(Eq, @debug.Debug)
 pub fn CodegenOptions::default() -> Self
+#deprecated
+pub fn CodegenOptions::equal(Self, Self) -> Bool
 pub fn CodegenOptions::new(root_name? : String, public_types? : Bool, derive_eq? : Bool, derive_debug? : Bool, header? : Bool) -> Self
+#deprecated
+pub fn CodegenOptions::not_equal(Self, Self) -> Bool
 pub fn CodegenOptions::root_name(Self) -> String
+#deprecated
+pub fn CodegenOptions::to_repr(Self) -> @debug.Repr
 
 pub(all) struct Diagnostic {
   code : DiagnosticCode
@@ -172,10 +196,16 @@ pub(all) struct Diagnostic {
   schema_path : JsonPointer
 } derive(Eq, @debug.Debug)
 pub fn Diagnostic::code(Self) -> DiagnosticCode
+#deprecated
+pub fn Diagnostic::equal(Self, Self) -> Bool
 pub fn Diagnostic::instance_path(Self) -> JsonPointer
 pub fn Diagnostic::message(Self) -> String
 pub fn Diagnostic::new(DiagnosticCode, String, instance_path? : JsonPointer, schema_path? : JsonPointer) -> Self
+#deprecated
+pub fn Diagnostic::not_equal(Self, Self) -> Bool
 pub fn Diagnostic::schema_path(Self) -> JsonPointer
+#deprecated
+pub fn Diagnostic::to_repr(Self) -> @debug.Repr
 pub fn Diagnostic::to_string(Self) -> String
 
 pub(all) enum DiagnosticCode {
@@ -201,7 +231,13 @@ pub(all) enum DiagnosticCode {
   InvalidIdentifier
   GenerationFailure
 } derive(Eq, @debug.Debug)
+#deprecated
+pub fn DiagnosticCode::equal(Self, Self) -> Bool
 pub fn DiagnosticCode::name(Self) -> String
+#deprecated
+pub fn DiagnosticCode::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn DiagnosticCode::to_repr(Self) -> @debug.Repr
 
 pub(all) struct DiscriminatorSchemaBuilder {
   tag : String
@@ -215,6 +251,8 @@ pub fn DiscriminatorSchemaBuilder::build(Self) -> Result[Schema, Diagnostic]
 pub fn DiscriminatorSchemaBuilder::metadata_entry(Self, String, Json) -> Self
 pub fn DiscriminatorSchemaBuilder::new(String) -> Self
 pub fn DiscriminatorSchemaBuilder::nullable(Self, Bool) -> Self
+#deprecated
+pub fn DiscriminatorSchemaBuilder::to_repr(Self) -> @debug.Repr
 
 pub(all) struct DocumentBuilder {
   root : Schema
@@ -224,6 +262,8 @@ pub fn DocumentBuilder::build(Self) -> Result[SchemaDocument, Array[Diagnostic]]
 pub fn DocumentBuilder::definition(Self, String, Schema) -> Self
 pub fn DocumentBuilder::definition_count(Self) -> Int
 pub fn DocumentBuilder::new(Schema) -> Self
+#deprecated
+pub fn DocumentBuilder::to_repr(Self) -> @debug.Repr
 
 pub(all) struct JsonPointer {
   segments : Array[PathSegment]
@@ -231,14 +271,20 @@ pub(all) struct JsonPointer {
 pub fn JsonPointer::append(Self, Self) -> Self
 pub fn JsonPointer::depth(Self) -> Int
 pub fn JsonPointer::display(Self) -> String
+#deprecated
+pub fn JsonPointer::equal(Self, Self) -> Bool
 pub fn JsonPointer::index(Self, Int) -> Self
 pub fn JsonPointer::is_root(Self) -> Bool
 pub fn JsonPointer::last_index(Self) -> Int?
 pub fn JsonPointer::last_property(Self) -> String?
+#deprecated
+pub fn JsonPointer::not_equal(Self, Self) -> Bool
 pub fn JsonPointer::parent(Self) -> Self?
 pub fn JsonPointer::property(Self, String) -> Self
 pub fn JsonPointer::root() -> Self
 pub fn JsonPointer::segments_copy(Self) -> Array[PathSegment]
+#deprecated
+pub fn JsonPointer::to_repr(Self) -> @debug.Repr
 pub fn JsonPointer::to_string(Self) -> String
 
 pub(all) struct JtdCodec {
@@ -254,6 +300,8 @@ pub fn JtdCodec::encode_json(Self, Json, escape_slash? : Bool) -> Result[String,
 pub fn JtdCodec::encode_validated(Self, ValidatedJson, escape_slash? : Bool) -> String
 pub fn JtdCodec::new(SchemaDocument, options? : ValidationOptions) -> Result[Self, CodecError]
 pub fn JtdCodec::options(Self) -> ValidationOptions
+#deprecated
+pub fn JtdCodec::to_repr(Self) -> @debug.Repr
 
 pub(all) enum JtdType {
   BooleanType
@@ -268,12 +316,18 @@ pub(all) enum JtdType {
   StringType
   TimestampType
 } derive(Eq, @debug.Debug)
+#deprecated
+pub fn JtdType::equal(Self, Self) -> Bool
 pub fn JtdType::is_integer(Self) -> Bool
 pub fn JtdType::is_numeric(Self) -> Bool
 pub fn JtdType::is_signed(Self) -> Bool
 pub fn JtdType::maximum(Self) -> Double?
 pub fn JtdType::minimum(Self) -> Double?
 pub fn JtdType::name(Self) -> String
+#deprecated
+pub fn JtdType::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn JtdType::to_repr(Self) -> @debug.Repr
 
 pub(all) struct ObjectSchemaBuilder {
   required : Map[String, Schema]
@@ -291,11 +345,19 @@ pub fn ObjectSchemaBuilder::optional(Self, String, Schema) -> Self
 pub fn ObjectSchemaBuilder::optional_count(Self) -> Int
 pub fn ObjectSchemaBuilder::required(Self, String, Schema) -> Self
 pub fn ObjectSchemaBuilder::required_count(Self) -> Int
+#deprecated
+pub fn ObjectSchemaBuilder::to_repr(Self) -> @debug.Repr
 
 pub(all) enum PathSegment {
   Property(String)
   Index(Int)
 } derive(Eq, @debug.Debug)
+#deprecated
+pub fn PathSegment::equal(Self, Self) -> Bool
+#deprecated
+pub fn PathSegment::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn PathSegment::to_repr(Self) -> @debug.Repr
 
 pub(all) struct Schema {
   form : SchemaForm
@@ -321,6 +383,8 @@ pub fn Schema::properties(Map[String, Self], Map[String, Self], Bool) -> Self
 pub fn Schema::ref_name(Self) -> String?
 pub fn Schema::reference(String) -> Self
 pub fn Schema::required_properties(Self) -> Map[String, Self]?
+#deprecated
+pub fn Schema::to_repr(Self) -> @debug.Repr
 pub fn Schema::type_(JtdType) -> Self
 pub fn Schema::type_kind(Self) -> JtdType?
 pub fn Schema::value_schema(Self) -> Self?
@@ -334,10 +398,16 @@ pub(all) struct SchemaCheckOptions {
   max_errors : Int
 } derive(Eq, @debug.Debug)
 pub fn SchemaCheckOptions::default() -> Self
+#deprecated
+pub fn SchemaCheckOptions::equal(Self, Self) -> Bool
 pub fn SchemaCheckOptions::max_depth(Self) -> Int
 pub fn SchemaCheckOptions::max_errors(Self) -> Int
 pub fn SchemaCheckOptions::max_nodes(Self) -> Int
 pub fn SchemaCheckOptions::new(max_depth? : Int, max_nodes? : Int, max_errors? : Int) -> Self
+#deprecated
+pub fn SchemaCheckOptions::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn SchemaCheckOptions::to_repr(Self) -> @debug.Repr
 
 pub(all) struct SchemaDocument {
   root : Schema
@@ -350,6 +420,8 @@ pub fn SchemaDocument::definitions(Self) -> Map[String, Schema]
 pub fn SchemaDocument::has_definition(Self, String) -> Bool
 pub fn SchemaDocument::new(Schema, definitions? : Map[String, Schema]) -> Self
 pub fn SchemaDocument::root(Self) -> Schema
+#deprecated
+pub fn SchemaDocument::to_repr(Self) -> @debug.Repr
 
 pub(all) enum SchemaForm {
   EmptyForm
@@ -361,6 +433,8 @@ pub(all) enum SchemaForm {
   ValuesForm(Schema)
   DiscriminatorForm(String, Map[String, Schema])
 } derive(@debug.Debug)
+#deprecated
+pub fn SchemaForm::to_repr(Self) -> @debug.Repr
 
 pub(all) struct SchemaNodeInfo {
   path : JsonPointer
@@ -370,10 +444,16 @@ pub(all) struct SchemaNodeInfo {
   child_count : Int
 } derive(Eq, @debug.Debug)
 pub fn SchemaNodeInfo::child_count(Self) -> Int
+#deprecated
+pub fn SchemaNodeInfo::equal(Self, Self) -> Bool
 pub fn SchemaNodeInfo::form(Self) -> String
 pub fn SchemaNodeInfo::is_nullable(Self) -> Bool
+#deprecated
+pub fn SchemaNodeInfo::not_equal(Self, Self) -> Bool
 pub fn SchemaNodeInfo::path(Self) -> JsonPointer
 pub fn SchemaNodeInfo::shape(Self) -> String
+#deprecated
+pub fn SchemaNodeInfo::to_repr(Self) -> @debug.Repr
 
 pub(all) struct SchemaStats {
   node_count : Int
@@ -398,13 +478,19 @@ pub fn SchemaStats::discriminator_count(Self) -> Int
 pub fn SchemaStats::elements_count(Self) -> Int
 pub fn SchemaStats::empty_count(Self) -> Int
 pub fn SchemaStats::enum_count(Self) -> Int
+#deprecated
+pub fn SchemaStats::equal(Self, Self) -> Bool
 pub fn SchemaStats::max_depth(Self) -> Int
 pub fn SchemaStats::node_count(Self) -> Int
+#deprecated
+pub fn SchemaStats::not_equal(Self, Self) -> Bool
 pub fn SchemaStats::nullable_count(Self) -> Int
 pub fn SchemaStats::optional_property_count(Self) -> Int
 pub fn SchemaStats::properties_count(Self) -> Int
 pub fn SchemaStats::reference_count(Self) -> Int
 pub fn SchemaStats::required_property_count(Self) -> Int
+#deprecated
+pub fn SchemaStats::to_repr(Self) -> @debug.Repr
 pub fn SchemaStats::to_string(Self) -> String
 pub fn SchemaStats::type_count(Self) -> Int
 pub fn SchemaStats::values_count(Self) -> Int
@@ -412,7 +498,13 @@ pub fn SchemaStats::values_count(Self) -> Int
 pub(all) struct ValidatedJson {
   value : Json
 } derive(Eq, @debug.Debug)
+#deprecated
+pub fn ValidatedJson::equal(Self, Self) -> Bool
+#deprecated
+pub fn ValidatedJson::not_equal(Self, Self) -> Bool
 pub fn ValidatedJson::stringify(Self, escape_slash? : Bool) -> String
+#deprecated
+pub fn ValidatedJson::to_repr(Self) -> @debug.Repr
 pub fn ValidatedJson::value(Self) -> Json
 
 pub(all) struct ValidationOptions {
@@ -422,11 +514,17 @@ pub(all) struct ValidationOptions {
   max_nodes : Int
 } derive(Eq, @debug.Debug)
 pub fn ValidationOptions::default() -> Self
+#deprecated
+pub fn ValidationOptions::equal(Self, Self) -> Bool
 pub fn ValidationOptions::max_depth(Self) -> Int
 pub fn ValidationOptions::max_errors(Self) -> Int
 pub fn ValidationOptions::max_nodes(Self) -> Int
 pub fn ValidationOptions::max_ref_depth(Self) -> Int
 pub fn ValidationOptions::new(max_errors? : Int, max_depth? : Int, max_ref_depth? : Int, max_nodes? : Int) -> Self
+#deprecated
+pub fn ValidationOptions::not_equal(Self, Self) -> Bool
+#deprecated
+pub fn ValidationOptions::to_repr(Self) -> @debug.Repr
 
 pub(all) struct ValidationReport {
   errors : Array[Diagnostic]
@@ -436,6 +534,8 @@ pub(all) struct ValidationReport {
 pub fn ValidationReport::errors(Self) -> Array[Diagnostic]
 pub fn ValidationReport::is_truncated(Self) -> Bool
 pub fn ValidationReport::is_valid(Self) -> Bool
+#deprecated
+pub fn ValidationReport::to_repr(Self) -> @debug.Repr
 pub fn ValidationReport::visited_nodes(Self) -> Int
 
 // Type aliases

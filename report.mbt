@@ -294,6 +294,39 @@ pub fn schema_report_string(
 }
 
 ///|
+fn markdown_escape_cell(value : String) -> String {
+  let output = StringBuilder()
+  for character in value {
+    match character {
+      '\n' | '\r' => output.write_char(' ')
+      '\\'
+      | '|'
+      | '`'
+      | '*'
+      | '_'
+      | '{'
+      | '}'
+      | '['
+      | ']'
+      | '('
+      | ')'
+      | '#'
+      | '+'
+      | '-'
+      | '.'
+      | '!'
+      | '<'
+      | '>' => {
+        output.write_char('\\')
+        output.write_char(character)
+      }
+      _ => output.write_char(character)
+    }
+  }
+  output.to_string()
+}
+
+///|
 pub fn schema_report_markdown(document : SchemaDocument) -> String {
   let stats = analyze_schema(document)
   let output = StringBuilder()
@@ -301,10 +334,10 @@ pub fn schema_report_markdown(document : SchemaDocument) -> String {
   output.write_string("- Specification: ")
   output.write_string(SPECIFICATION)
   output.write_string("\n- Root form: ")
-  output.write_string(document.root().form_name())
-  output.write_string("\n- Root shape: `")
-  output.write_string(schema_shape(document.root()))
-  output.write_string("`\n- Schema nodes: ")
+  output.write_string(markdown_escape_cell(document.root().form_name()))
+  output.write_string("\n- Root shape: ")
+  output.write_string(markdown_escape_cell(schema_shape(document.root())))
+  output.write_string("\n- Schema nodes: ")
   output.write_string(stats.node_count().to_string())
   output.write_string("\n- Maximum depth: ")
   output.write_string(stats.max_depth().to_string())
@@ -317,17 +350,17 @@ pub fn schema_report_markdown(document : SchemaDocument) -> String {
   output.write_string("|---|---|---|---:|---:|\n")
   for info in schema_inventory(document) {
     let path = if info.path().is_root() {
-      "`<root>`"
+      "<root>"
     } else {
-      "`" + info.path().to_string() + "`"
+      info.path().to_string()
     }
     output.write_string("| ")
-    output.write_string(path)
+    output.write_string(markdown_escape_cell(path))
     output.write_string(" | ")
-    output.write_string(info.form())
-    output.write_string(" | `")
-    output.write_string(info.shape())
-    output.write_string("` | ")
+    output.write_string(markdown_escape_cell(info.form()))
+    output.write_string(" | ")
+    output.write_string(markdown_escape_cell(info.shape()))
+    output.write_string(" | ")
     output.write_string(if info.is_nullable() { "yes" } else { "no" })
     output.write_string(" | ")
     output.write_string(info.child_count().to_string())
@@ -342,7 +375,7 @@ pub fn schema_report_markdown(document : SchemaDocument) -> String {
       output.write_string("- `")
       output.write_string(diagnostic.code().name())
       output.write_string("`: ")
-      output.write_string(diagnostic.message())
+      output.write_string(markdown_escape_cell(diagnostic.message()))
       output.write_string("\n")
     }
   }

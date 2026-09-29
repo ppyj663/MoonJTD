@@ -35,10 +35,10 @@ platform.
 
 ## Current release status
 
-MoonJTD 0.1.1 is published on Mooncakes. Install the package with:
+MoonJTD 0.2.0 is the current release on Mooncakes. Install the package with:
 
 ```bash
-moon add ppyj663/moonjtd@0.1.1
+moon add ppyj663/moonjtd@0.2.0
 ```
 
 To evaluate the source, CLI, and examples directly from GitHub:
@@ -94,10 +94,20 @@ moon run examples/codegen --target js
 moonjtd --help
 moonjtd check schema.jtd.json
 moonjtd validate schema.jtd.json instance.json
+moonjtd validate schema.jtd.json instance.json --format json
 moonjtd generate schema.jtd.json RootType output.mbt
 moonjtd inspect schema.jtd.json
 moonjtd format schema.jtd.json output.json
+moonjtd report schema.jtd.json
+moonjtd report schema.jtd.json --format markdown report.md
 ```
+
+`report` prints a pretty JSON report by default. Select `markdown` for a
+review-friendly summary containing schema statistics, a node inventory, and
+lint findings. Reports go to standard output unless an output path is supplied.
+`validate --format json` emits the structured validation result, including
+validity, resource-limit status, visited-node count, and diagnostics. Invalid
+instances still produce JSON and return exit status `1`.
 
 During development, replace `moonjtd` with `moon run cmd/main --target js --`.
 
@@ -146,6 +156,7 @@ moon coverage analyze
 pwsh ./scripts/conformance.ps1
 pwsh ./scripts/audit.ps1
 pwsh ./scripts/cli-smoke.ps1
+pwsh ./scripts/check-toolchain.ps1
 ```
 
 Native tests require a C compiler (`clang`, `gcc`, `cc`, or MSVC `cl`). Native

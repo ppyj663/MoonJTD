@@ -1,6 +1,6 @@
 ///|
 /// Semantic version of the public MoonJTD API.
-pub const VERSION : String = "0.1.0"
+pub const VERSION : String = "0.2.0"
 
 ///|
 /// The RFC implemented by this package.

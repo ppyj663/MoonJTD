@@ -1,6 +1,6 @@
 ///|
 test "version banner identifies specification" {
-  assert_eq(@moonjtd.version_banner(), "MoonJTD 0.1.0 (RFC 8927)")
+  assert_eq(@moonjtd.version_banner(), "MoonJTD 0.2.0 (RFC 8927)")
 }
 
 ///|
